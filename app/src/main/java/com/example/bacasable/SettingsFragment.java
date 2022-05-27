@@ -1,5 +1,7 @@
 package com.example.bacasable;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,6 +9,11 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -14,6 +21,13 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class SettingsFragment extends Fragment {
+
+    // Views
+    TextInputEditText ipAddress_et;
+    Button save_btn;
+
+    // Shared preferences
+    SharedPreferences myPref;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -59,6 +73,30 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+        View view = inflater.inflate(R.layout.fragment_settings, container, false);
+
+        ipAddress_et = view.findViewById(R.id.ipAddress_et);
+        save_btn = view.findViewById(R.id.save_btn);
+
+        // Initializing shared preferences
+        myPref = getActivity().getApplicationContext().getSharedPreferences("MyPref", Context.MODE_PRIVATE);
+
+        save_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String ipToSave = ipAddress_et.getText().toString().trim();
+
+                myPref.edit().putString("baseUrl", ipToSave).apply();
+            }
+        });
+
+        String baseUrl = myPref.getString("baseUrl","");
+
+        if(!baseUrl.isEmpty()) {
+            ipAddress_et.setText(baseUrl);
+        }
+
+
+        return view;
     }
 }
